@@ -2,15 +2,13 @@ from math import sqrt
 from functools import lru_cache
 
 
-def _sieve_primes(possible, certain=None):
-    if possible == []:
-        return certain
-    if certain == None:
-        certain = []
-    new_prime = possible[0]
-    certain += [new_prime]
-    possible = list(filter(lambda x: x % new_prime != 0, possible))
-    return sieve_primes(possible, certain)
+def _sieve_primes(possible):
+    certain = []
+    while len(possible) > 0:
+        new_prime = possible[0]
+        certain += [new_prime]
+        possible = list(filter(lambda x: x % new_prime != 0, possible))
+    return certain
 
 
 @lru_cache(maxsize=None)
