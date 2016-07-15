@@ -1,19 +1,16 @@
 from math import sqrt
 from functools import lru_cache
 
-
-def _sieve_primes(possible):
-    certain = []
-    while len(possible) > 0:
-        new_prime = possible[0]
-        certain += [new_prime]
-        possible = list(filter(lambda x: x % new_prime != 0, possible))
-    return certain
-
-
 @lru_cache(maxsize=None)
-def primes_up_to(i):
-    return _sieve_primes(range(2, i))
+def primes_up_to(n):
+    is_prime = [True] * n
+    for i in range(2,int(sqrt(n))):
+        j = 2 * i
+        while j < n:
+            is_prime[j] = False
+            j += i
+    return [i for i, x in enumerate(is_prime) if x][2:]
+
 
 @lru_cache(maxsize=None)
 def is_prime(i):
