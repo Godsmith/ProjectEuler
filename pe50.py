@@ -10,29 +10,25 @@ Which prime, below one-million, can be written as the sum of the most consecutiv
 from primes import primes_up_to
 from math import sqrt
 
-LIMIT = 1000
+LIMIT = 1000000
 
 primes = primes_up_to(LIMIT)
 
 start = 0
-end = 0
+count = 1
 record_count = 0
 record_prime = 0
-searched = [[False for i in range(LIMIT)] for j in range(LIMIT)]
 while start < int(sqrt(LIMIT)):
+    end = start + count - 1
     psum = sum(primes[start:end])
-    count = end - start + 1
-    searched[start][end] = True
     print(psum, primes[start:end])
-    if psum > LIMIT and count - 1 > record_count:
-        if not searched[start][end-1]:
-            end -= 1
-        else:
-            start += 1
+    if psum > LIMIT:
+        start += 1
+        count = record_count
     else:
         if psum in primes:
             record_prime = psum
             record_count = count
-        end += 1
+        count += 1
 
 print(record_count, record_prime)
