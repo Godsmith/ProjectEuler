@@ -8,6 +8,10 @@ class Hand:
     class Combination(IntEnum):
         highest = 1
         pair = 2
+        three_of_a_kind = 3
+        straight = 4
+        flush = 5
+        four_of_a_kind = 6
 
     def __init__(self, s):
         card_strings = s.split()
@@ -30,11 +34,14 @@ class Hand:
         value_count = {}
         for card in cards:
             value_count[card.value] = value_count.get(card.value, 0) + 1
-        if max(value_count.values()) == 2:
-            for value in value_count:
-                if value_count[value] == 2:
-                    return_value = value
-            return (Hand.Combination.pair, return_value)
+        for combination, count in [(Hand.Combination.four_of_a_kind, 4),
+                                   (Hand.Combination.three_of_a_kind, 3),
+                                   (Hand.Combination.pair, 2)]:
+            if max(value_count.values()) == count:
+                for value in value_count:
+                    if value_count[value] == count:
+                        return_value = value
+                return (combination, return_value)
         else:
             return (Hand.Combination.highest, max([card.value for card in cards]))
 
