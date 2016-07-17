@@ -12,15 +12,23 @@ class Hand:
     def __init__(self, s):
         card_strings = s.split()
         self._cards = [Card(s) for s in card_strings]
+        self._combination, self._value = self._generate_combination_and_combination_value(self._cards)
 
     def __gt__(self, other):
-        return (self.combination >= other.combination and
-                self.value > other.value)
+        if self.combination > other.combination:
+            return True
+        elif self.combination < other.combination:
+            return False
+        else:
+            return self.value > other.value
 
-    @property
-    def _combination_and_combination_value(self) -> (Combination, List[Card]):
+    def __repr__(self):
+        return "<Hand: %s | %s %s>" % (', '.join(map(str, self._cards)), self.combination, self.value)
+
+    @staticmethod
+    def _generate_combination_and_combination_value(cards) -> (Combination, List[Card]):
         value_count = {}
-        for card in self._cards:
+        for card in cards:
             value_count[card.value] = value_count.get(card.value, 0) + 1
         if max(value_count.values()) == 2:
             for value in value_count:
@@ -28,12 +36,12 @@ class Hand:
                     return_value = value
             return (Hand.Combination.pair, return_value)
         else:
-            return (Hand.Combination.highest, max([card.value for card in self._cards]))
+            return (Hand.Combination.highest, max([card.value for card in cards]))
 
     @property
     def combination(self):
-        return self._combination_and_combination_value[0]
+        return self._combination
 
     @property
     def value(self):
-        return self._combination_and_combination_value[1]
+        return self._value

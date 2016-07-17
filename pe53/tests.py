@@ -29,3 +29,8 @@ class HandTests(unittest.TestCase):
         h1 = Hand('AH AC 3D 4S 5H')
         h2 = Hand('KH KC 3D 4S 5H')
         self.assertGreater(h1, h2)
+
+    def test_low_pair_beats_highest(self):
+        h1 = Hand('AH 6C 3D 4S 5H')
+        h2 = Hand('KH KC 3D 4S 5H')
+        self.assertGreater(h2, h1)

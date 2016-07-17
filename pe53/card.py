@@ -33,6 +33,10 @@ class Card():
     def __init__(self, s):
         self._value = Card.Value.from_string(s[0])
         self._suite = s[1]
+        self._string = s
+
+    def __repr__(self):
+        return self._string
 
     @property
     def value(self):
