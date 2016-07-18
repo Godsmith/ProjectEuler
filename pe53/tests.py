@@ -69,3 +69,8 @@ class HandTests(unittest.TestCase):
         h1 = Hand('2H 3H 4H 5H 6H')
         h2 = Hand('KH KC KD KS 5C')
         self.assertGreater(h1, h2)
+
+    def test_royal_flush_beats_straight_flush(self):
+        h1 = Hand('TC QC JC AC KC')
+        h2 = Hand('2H 3H 4H 5H 6H')
+        self.assertGreater(h1, h2)
