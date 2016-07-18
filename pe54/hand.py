@@ -32,8 +32,6 @@ class Hand:
                 self._rank = max(Hand.Rank.flush, self._rank)
                 self._values = self._values.sort(reverse=True)
 
-
-
     def __gt__(self, other):
         if self.rank > other.rank:
             return True
@@ -49,35 +47,32 @@ class Hand:
     def _generate_nonflush_rank_and_values(cards) -> (Rank, List[Card.Value]):
         values = [card.value for card in cards]
 
-
         # Straight
         needed_values = [Card.Value(min(values) + i) for i in range(1, 5)]
         if not (False in [value in values for value in needed_values]):
             return Hand.Rank.straight, sorted(values, reverse=True)
 
-        # Full house, two pairs
+        # Else
         value_count = {}
         for card in cards:
             value_count[card.value] = value_count.get(card.value, 0) + 1
-        sorted_value_counts = sorted(value_count.values())
-        if sorted_value_counts == [1, 2, 2]:
-            values_in_rank = list(filter(lambda x: value_count[x] == 2, value_count.keys()))
+        sorted_value_counts = tuple(sorted(value_count.values()))
+        rank_from_value_counts = {(1, 2, 2): Hand.Rank.two_pairs,
+                                  (2, 3): Hand.Rank.full_house,
+                                  (1, 4): Hand.Rank.four_of_a_kind,
+                                  (1, 1, 3): Hand.Rank.three_of_a_kind,
+                                  (1, 1, 1, 2): Hand.Rank.pair,
+                                  (1, 1, 1, 1, 1): Hand.Rank.highest}
+        rank = rank_from_value_counts[sorted_value_counts]
+
+        def _get_value(values, value_count, count):
+            values_in_rank = list(filter(lambda x: value_count[x] == count, value_count.keys()))
             values_outside_rank = [value for value in values if not value in values_in_rank]
-            return Hand.Rank.two_pairs, sorted(values_in_rank, reverse=True) + values_outside_rank
-        if sorted_value_counts == [2, 3]:
-            return Hand.Rank.full_house, sorted(values, reverse=True)
+            return sorted(values_in_rank, reverse=True) + values_outside_rank
 
-        # Pair, three of a kind, four of a kind
-        for rank, count in [(Hand.Rank.four_of_a_kind, 4),
-                            (Hand.Rank.three_of_a_kind, 3),
-                            (Hand.Rank.pair, 2)]:
-            if max(value_count.values()) == count:
-                values_in_rank = list(filter(lambda x: value_count[x] == count, value_count.keys()))
-                values_outside_rank = [value for value in values if not value in values_in_rank]
-                return rank, sorted(values_in_rank, reverse=True) + values_outside_rank
-        else:
-            return Hand.Rank.highest, sorted(values, reverse=True)
+        return rank, _get_value(values, value_count, sorted_value_counts[-1])
 
+    @staticmethod
     @property
     def rank(self):
         return self._rank
