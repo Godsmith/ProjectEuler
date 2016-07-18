@@ -74,3 +74,8 @@ class HandTests(unittest.TestCase):
         h1 = Hand('TC QC JC AC KC')
         h2 = Hand('2H 3H 4H 5H 6H')
         self.assertGreater(h1, h2)
+
+    def test_last_card_determines_winner(self):
+        h1 = Hand('3H QC JC AC KC')
+        h2 = Hand('2H QS JS KS AS')
+        self.assertGreater(h1, h2)
