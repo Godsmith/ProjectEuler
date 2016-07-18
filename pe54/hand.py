@@ -1,7 +1,7 @@
 from enum import IntEnum
 from typing import List
 
-from pe53.card import Card
+from pe54.card import Card
 
 
 class Hand:
@@ -43,7 +43,7 @@ class Hand:
             return self.values > other.values
 
     def __repr__(self):
-        return "<Hand: %s | %s %s>" % (', '.join(map(str, self._cards)), self.rank, self.value)
+        return "<Hand: %s | %s %s>" % (', '.join(map(str, self._cards)), self.rank, self.values)
 
     @staticmethod
     def _generate_nonflush_rank_and_values(cards) -> (Rank, List[Card.Value]):

@@ -1,7 +1,7 @@
 import unittest
 
-from pe53.card import Card
-from pe53.hand import Hand
+from pe54.card import Card
+from pe54.hand import Hand
 
 
 class CardTests(unittest.TestCase):
