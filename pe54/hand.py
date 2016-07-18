@@ -72,7 +72,6 @@ class Hand:
 
         return rank, _get_value(values, value_count, sorted_value_counts[-1])
 
-    @staticmethod
     @property
     def rank(self):
         return self._rank
