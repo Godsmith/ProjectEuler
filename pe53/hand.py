@@ -1,10 +1,11 @@
 from enum import IntEnum
+from typing import List
 
 from pe53.card import Card
 
 
 class Hand:
-    class Combination(IntEnum):
+    class Rank(IntEnum):
         highest = 1
         pair = 2
         two_pairs = 3
@@ -13,62 +14,74 @@ class Hand:
         flush = 6
         full_house = 7
         four_of_a_kind = 8
+        straight_flush = 9
+        royal_flush = 10
 
     def __init__(self, s):
         card_strings = s.split()
         self._cards = [Card(s) for s in card_strings]
-        self._combination, self._value = self._generate_combination_and_combination_value(self._cards)
+        self._rank, self._values = self._generate_nonflush_rank_and_values(self._cards)
+        flush = not (False in [card.suite == self._cards[0].suite for card in self._cards])
+        if flush:
+            if self._rank == Hand.Rank.straight:
+                if max(self._values) == Card.Value.ace:
+                    self._rank = Hand.Rank.royal_flush
+                else:
+                    self._rank = Hand.Rank.straight_flush
+            else:
+                self._rank = max(Hand.Rank.flush, self._rank)
+                self._values = self._values.sort(reverse=True)
+
+
 
     def __gt__(self, other):
-        if self.combination > other.combination:
+        if self.rank > other.rank:
             return True
-        elif self.combination < other.combination:
+        elif self.rank < other.rank:
             return False
         else:
-            return self.value > other.value
+            return self.values > other.values
 
     def __repr__(self):
-        return "<Hand: %s | %s %s>" % (', '.join(map(str, self._cards)), self.combination, self.value)
+        return "<Hand: %s | %s %s>" % (', '.join(map(str, self._cards)), self.rank, self.value)
 
     @staticmethod
-    def _generate_combination_and_combination_value(cards) -> (Combination, Card.Value):
+    def _generate_nonflush_rank_and_values(cards) -> (Rank, List[Card.Value]):
         values = [card.value for card in cards]
 
-        # Flush
-        if not (False in [card.suite == cards[0].suite for card in cards]):
-            return Hand.Combination.flush, max(values)
 
         # Straight
         needed_values = [Card.Value(min(values) + i) for i in range(1, 5)]
         if not (False in [value in values for value in needed_values]):
-            return Hand.Combination.straight, max(values)
+            return Hand.Rank.straight, sorted(values, reverse=True)
 
+        # Full house, two pairs
         value_count = {}
         for card in cards:
             value_count[card.value] = value_count.get(card.value, 0) + 1
         sorted_value_counts = sorted(value_count.values())
+        if sorted_value_counts == [1, 2, 2]:
+            values_in_rank = list(filter(lambda x: value_count[x] == 2, value_count.keys()))
+            values_outside_rank = [value for value in values if not value in values_in_rank]
+            return Hand.Rank.two_pairs, sorted(values_in_rank, reverse=True) + values_outside_rank
         if sorted_value_counts == [2, 3]:
-            return Hand.Combination.full_house, max(values)
-        elif sorted_value_counts == [1, 2, 2]:
-            value_of_highest_pair = max(filter(lambda x: value_count[x] == 2, value_count.keys()))
-            return Hand.Combination.two_pairs, value_of_highest_pair
+            return Hand.Rank.full_house, sorted(values, reverse=True)
 
         # Pair, three of a kind, four of a kind
-        for combination, count in [(Hand.Combination.four_of_a_kind, 4),
-                                   (Hand.Combination.three_of_a_kind, 3),
-                                   (Hand.Combination.pair, 2)]:
+        for rank, count in [(Hand.Rank.four_of_a_kind, 4),
+                            (Hand.Rank.three_of_a_kind, 3),
+                            (Hand.Rank.pair, 2)]:
             if max(value_count.values()) == count:
-                for value in value_count:
-                    if value_count[value] == count:
-                        return_value = value
-                return (combination, return_value)
+                values_in_rank = list(filter(lambda x: value_count[x] == count, value_count.keys()))
+                values_outside_rank = [value for value in values if not value in values_in_rank]
+                return rank, sorted(values_in_rank, reverse=True) + values_outside_rank
         else:
-            return (Hand.Combination.highest, max([card.value for card in cards]))
+            return Hand.Rank.highest, sorted(values, reverse=True)
 
     @property
-    def combination(self):
-        return self._combination
+    def rank(self):
+        return self._rank
 
     @property
-    def value(self):
-        return self._value
+    def values(self):
+        return self._values

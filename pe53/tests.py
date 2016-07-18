@@ -45,11 +45,6 @@ class HandTests(unittest.TestCase):
         h2 = Hand('KH KC 4D 4S 5H')
         self.assertGreater(h1, h2)
 
-    def test_four_of_a_kind_beats_three_of_a_kind(self):
-        h1 = Hand('AH 3C 3D 3S 3H')
-        h2 = Hand('KH KC KD 4S 5H')
-        self.assertGreater(h1, h2)
-
     def test_straight_beats_three_of_a_kind(self):
         h1 = Hand('KH QC JD TS 9H')
         h2 = Hand('KH KC KD 4S 5H')
@@ -58,4 +53,19 @@ class HandTests(unittest.TestCase):
     def test_flush_beats_straight(self):
         h1 = Hand('KH QH JH TH 9H')
         h2 = Hand('KH QC JD TS 9H')
+        self.assertGreater(h1, h2)
+
+    def test_full_house_beats_flush(self):
+        h1 = Hand('2H 3C 3D 3S 2H')
+        h2 = Hand('QC KC 4C 4C 5C')
+        self.assertGreater(h1, h2)
+
+    def test_four_of_a_kind_beats_full_house(self):
+        h1 = Hand('AH 3C 3D 3S 3H')
+        h2 = Hand('KH KC KD 5S 5H')
+        self.assertGreater(h1, h2)
+
+    def test_straight_flush_beats_four_of_a_kind(self):
+        h1 = Hand('2H 3H 4H 5H 6H')
+        h2 = Hand('KH KC KD KS 5C')
         self.assertGreater(h1, h2)
