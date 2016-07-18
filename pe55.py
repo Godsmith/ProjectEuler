@@ -1,32 +1,22 @@
 from functools import lru_cache
-from typing import List
+
+from integer_functions import digit_list
 
 
 @lru_cache(maxsize=None)
 def reverse_integer(i: int) -> int:
-    return sum([d * 10 ** i for i, d in enumerate(reversed(_get_digits(i)))])
+    return sum([d * 10 ** i for i, d in enumerate(reversed(digit_list(i)))])
 
 
 @lru_cache(maxsize=None)
 def is_palindrome(i: int) -> bool:
-    digits = _get_digits(i)
+    digits = digit_list(i)
     while len(digits) > 1:
         if digits[0] == digits[-1]:
             digits = digits[1:-1]
         else:
             return False
     return True
-
-
-def _get_digits(i: int) -> List[int]:
-    digits = []
-    while True:
-        digits.append(i % 10)
-        i //= 10
-        if i // 10 == 0:
-            digits.append(i)
-            break
-    return digits
 
 
 lychrel_numbers = 0
