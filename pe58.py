@@ -19,17 +19,23 @@ def rotate_nested_list(nested_list):
     return [list(reversed(list_)) for list_ in translation]
 
 
-def spiral_square(d, square=None):
-    if square is None:
-        square = [[1]]
+def spiral_square(d):
+    square = [[1]]
+    while len(square) < d:
+        square = add_1_to_diameter_of_spiral_square(square)
+    return square
+
+
+def add_1_to_diameter_of_spiral_square(square):
     next_value = len(square) ** 2 + 1
-    while next_value <= d ** 2:
+    for _ in range(2):
         square = rotate_nested_list(square)
         square.append([])
         for _ in square[0]:
             square[-1].append(next_value)
             next_value += 1
     return square
+
 
 
 primes = set()
