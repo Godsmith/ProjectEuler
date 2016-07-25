@@ -14,18 +14,24 @@ def spiral_square(d):
 
 
 def add_2_to_diameter_of_spiral_square(square):
-    next_value = len(square) ** 2 + 1
-    for _ in range(4):
-        square = rotate_nested_list(square)
-        square.append([])
-        for _ in square[0]:
-            square[-1].append(next_value)
-            next_value += 1
-    return square
+    d = len(square)
+    n = d ** 2
+    new_first_row_start = n+d
+    new_first_row = list(range(new_first_row_start + d + 2, new_first_row_start, -1))
+    new_last_row_end = (d + 2) ** 2
+    new_last_row = list(reversed(range(new_last_row_end, new_last_row_end - d - 2, -1)))
+    first_column = range(new_first_row[0] + 1, new_last_row[0])
+    last_column = range(new_first_row[-1] - 1, new_first_row[-1] - d - 1, -1)
+
+    new_square = [new_first_row]
+    for first, last, row in zip(first_column, last_column, square):
+        new_square.append([first] + row + [last])
+    new_square.append(new_last_row)
+    return new_square
 
 
 def main():
-    all_primes = set(primes_up_to(1000000))
+    all_primes = set(primes_up_to(10000000))
     prime_diagonals = set()
     nonprime_diagonals = {1}
 
