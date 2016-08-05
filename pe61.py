@@ -61,7 +61,8 @@ def four_digit_values_of(f):
 def possible_continuations(s, remaining_functions, four_digit_values_from_function, function_and_values, original):
     if len(remaining_functions) == 0:
         if original.startswith(s[2:]):
-            print(list(map(lambda x: x[1], function_and_values)))
+            list_ = list(map(lambda x: int(x[1]), function_and_values))
+            print(sum(list_), list_)
             return
     # print('possible continuations, testing %s with %s functions left' % (s, len(remaining_functions)))
     for function in remaining_functions:
