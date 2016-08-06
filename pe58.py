@@ -52,3 +52,14 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+def get_spiral_square_diagonals(side_length):
+    highest_number_in_previous_layer = (side_length - 2) ** 2
+    first_corner_number = highest_number_in_previous_layer + side_length - 1
+    return {
+        first_corner_number,
+        first_corner_number + side_length - 1,
+        first_corner_number + 2 * (side_length - 1),
+        first_corner_number + 3 * (side_length - 1)
+    }
