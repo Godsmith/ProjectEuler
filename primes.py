@@ -1,12 +1,13 @@
-from math import sqrt
 from functools import lru_cache
+from math import sqrt
+
 
 @lru_cache(maxsize=None)
 def primes_up_to(n):
-    is_prime = [True] * n
-    for i in range(2,int(sqrt(n))):
+    is_prime = [True] * (n + 1)
+    for i in range(2, n + 1):
         j = 2 * i
-        while j < n:
+        while j <= n:
             is_prime[j] = False
             j += i
     return [i for i, x in enumerate(is_prime) if x][2:]
