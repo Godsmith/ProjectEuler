@@ -1,4 +1,3 @@
-from pe84.card import Card
 from pe84.square import Square
 
 
@@ -19,7 +18,7 @@ class Board():
         if type_ == Square.Type.G2J:
             return self.get_position_of_next(Square.Type.JAIL, position)
         elif type_ == Square.Type.CC:
-            return self.get_new_position_based_on_card(self.community_chest_deck.pop(), position)
+            return self.community_chest_deck.pop().get_new_position(self, position)
         return position
 
     def get_position_of_next(self, type: Square.Type, position: int):
@@ -27,9 +26,3 @@ class Board():
         positions = [x[0] for x in positions_and_types if x[1] == type]
         distances = [(x - position) % len(self.squares) for x in positions]
         return position + min(distances)
-
-    def get_new_position_based_on_card(self, card, position):
-        if card.card_type == Card.Type.GOTO:
-            return self.get_position_of_next(card.square_type, position)
-        else:
-            return position
