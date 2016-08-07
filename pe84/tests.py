@@ -78,23 +78,23 @@ class TestGoToJail(unittest.TestCase):
 class TestDeck(unittest.TestCase):
     def test_shuffling_one_card_deck(self):
         deck = Deck()
-        deck.add_card(Card.create(Card.Type.GOTO))
+        deck.add_card(Card.create(Card.Type.GOTO_NEXT_OF_TYPE))
         deck.shuffle()
-        self.assertEquals(Card.Type.GOTO, deck.pop().card_type)
+        self.assertEquals(Card.Type.GOTO_NEXT_OF_TYPE, deck.pop().card_type)
 
     def test_popping_several_cards(self):
         deck = Deck()
-        deck.add_card(Card.create(Card.Type.GOTO))
+        deck.add_card(Card.create(Card.Type.GOTO_NEXT_OF_TYPE))
         deck.add_card(Card.create(Card.Type.NOOP))
-        deck.add_card(Card.create(Card.Type.GOTO))
-        self.assertEquals(Card.Type.GOTO, deck.pop().card_type)
+        deck.add_card(Card.create(Card.Type.GOTO_NEXT_OF_TYPE))
+        self.assertEquals(Card.Type.GOTO_NEXT_OF_TYPE, deck.pop().card_type)
         self.assertEquals(Card.Type.NOOP, deck.pop().card_type)
-        self.assertEquals(Card.Type.GOTO, deck.pop().card_type)
-        self.assertEquals(Card.Type.GOTO, deck.pop().card_type)
+        self.assertEquals(Card.Type.GOTO_NEXT_OF_TYPE, deck.pop().card_type)
+        self.assertEquals(Card.Type.GOTO_NEXT_OF_TYPE, deck.pop().card_type)
 
     def test_going_to_jail_due_to_g2j_card(self):
         cc_deck = Deck()
-        cc_deck.add_card(Card.create(Card.Type.GOTO, square_type=Square.Type.JAIL))
+        cc_deck.add_card(Card.create(Card.Type.GOTO_NEXT_OF_TYPE, square_type=Square.Type.JAIL))
         board = Board(community_chest_deck=cc_deck)
         board.add_square(Square.create(Square.Type.GO))
         board.add_square(Square.create(Square.Type.JAIL))
@@ -105,7 +105,7 @@ class TestDeck(unittest.TestCase):
 
     def test_going_to_go_due_to_g2go_card(self):
         cc_deck = Deck()
-        cc_deck.add_card(Card.create(Card.Type.GOTO, square_type=Square.Type.GO))
+        cc_deck.add_card(Card.create(Card.Type.GOTO_NEXT_OF_TYPE, square_type=Square.Type.GO))
         board = Board(community_chest_deck=cc_deck)
         board.add_square(Square.create(Square.Type.GO))
         board.add_square(Square.create(Square.Type.JAIL))
@@ -114,3 +114,28 @@ class TestDeck(unittest.TestCase):
         player.move(1)
         player.move(1)
         self.assertEquals(Square.Type.GO, player.square_type)
+
+    def test_going_to_first_railway_station_due_to_g2r1_card(self):
+        cc_deck = Deck()
+        cc_deck.add_card(Card.create(Card.Type.GOTO_NUMBER_OF_TYPE,
+                                     square_type=Square.Type.R, square_number=1))
+        board = Board(community_chest_deck=cc_deck)
+        board.add_square(Square.create(Square.Type.GO))
+        board.add_square(Square.create(Square.Type.R))
+        board.add_square(Square.create(Square.Type.CC))
+        board.add_square(Square.create(Square.Type.R))
+        player = Player(board)
+        player.move(2)
+        self.assertEquals(1, player.position)
+
+    def test_going_back_3_steps(self):
+        ch_deck = Deck()
+        ch_deck.add_card(Card.create(Card.Type.GO_BACK_THREE_STEPS))
+        board = Board(chance_deck=ch_deck)
+        board.add_square(Square.create(Square.Type.GO))
+        board.add_square(Square.create(Square.Type.R))
+        board.add_square(Square.create(Square.Type.CH))
+        board.add_square(Square.create(Square.Type.C))
+        player = Player(board)
+        player.move(2)
+        self.assertEquals(Square.Type.C, player.square_type)

@@ -13,6 +13,13 @@ class Square:
         C = 8,
         E = 9,
         H = 10
+        A = 11,
+        B = 12,
+        T = 13,
+        F = 14
+        G = 15,
+        D = 16,
+        FP = 17
 
     def __init__(self, type):
         self.type = type
@@ -29,4 +36,6 @@ class Square:
             return board.get_position_of_next(Square.Type.JAIL, position)
         elif self.type == Square.Type.CC:
             return board.community_chest_deck.pop().get_new_position(board, position)
+        elif self.type == Square.Type.CH:
+            return board.chance_deck.pop().get_new_position(board, position)
         return position
