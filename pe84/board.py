@@ -14,12 +14,7 @@ class Board():
         self.squares.append(square)
 
     def change_player_position(self, position):
-        type_ = self.squares[position].type
-        if type_ == Square.Type.G2J:
-            return self.get_position_of_next(Square.Type.JAIL, position)
-        elif type_ == Square.Type.CC:
-            return self.community_chest_deck.pop().get_new_position(self, position)
-        return position
+        return self.squares[position].get_new_position(self, position)
 
     def get_position_of_next(self, type: Square.Type, position: int):
         positions_and_types = [(i, square.type) for i, square in enumerate(self.squares)]

@@ -23,3 +23,10 @@ class Square:
     @staticmethod
     def create(type: Type):
         return Square(type)
+
+    def get_new_position(self, board, position):
+        if self.type == Square.Type.G2J:
+            return board.get_position_of_next(Square.Type.JAIL, position)
+        elif self.type == Square.Type.CC:
+            return board.community_chest_deck.pop().get_new_position(board, position)
+        return position
