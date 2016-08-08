@@ -48,9 +48,10 @@ class Hand:
         values = [card.value for card in cards]
 
         # Straight
-        needed_values = [Card.Value(min(values) + i) for i in range(1, 5)]
-        if not (False in [value in values for value in needed_values]):
-            return Hand.Rank.straight, sorted(values, reverse=True)
+        if min(values) <= Card.Value(10): # or we will try to create cards with value > 14
+            needed_values = [Card.Value(min(values) + i) for i in range(1, 5)]
+            if not (False in [value in values for value in needed_values]):
+                return Hand.Rank.straight, sorted(values, reverse=True)
 
         # Else
         value_count = {}

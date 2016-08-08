@@ -11,6 +11,7 @@ def main():
             print(h1, h2, h1 > h2)
             if does_p1_win:
                 p1_wins += 1
+    print(p1_wins)
 
 
 if __name__ == '__main__':
